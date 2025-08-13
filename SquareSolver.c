@@ -16,7 +16,6 @@ int main() {
     printf("Введите квадратное уравнение, корни которого вы хотите получить,\n"
             "в виде ax^2+bx+c = 0, где а,b,c - действительные числа!\n");
     scanf("%lfx^%d%lfx%lf", &a, &degree_indication, &b, &c);
-    printf("%lf", a);
     if (degree_indication != 2) {
         printf("Это не квадратное уравнение!!!\n");
         return 0;

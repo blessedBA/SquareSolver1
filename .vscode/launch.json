@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "name": "C/C++: gcc сборка и отладка активного файла",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "/Users/pashamalyshev/Documents/GitHub/First_Projekt/train",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "/Users/pashamalyshev/Documents/GitHub/First_Projekt",
+            "environment": [],
+            "externalConsole": true,
+            "MIMode": "lldb",
+            "preLaunchTask": "C/C++: gcc сборка активного файла"
+        }
+    ]
+}
