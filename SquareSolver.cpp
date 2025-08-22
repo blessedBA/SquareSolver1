@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
@@ -6,57 +7,37 @@
 #include <limits.h>       /*Для использования макросов, определяющих пределы типов данных
                             (например, INT32_MAX - максимальное значение для 32-битного целого числа)*/
 #include <string.h>       /*Для использования функций работы со строками (например, strlen)*/
-//#include <TXLib.h>
 
-int Test_Type(double a, double b, double c);     // функция, проверяющая тип уравнения(норм если
-                          // для функций у меня будет нотация Snake_Case???)
-
+int test_type(double koef_a, double koef_b, double koef_c);
+void korni(int koef_a, int koef_b, int koef_c);
 
 int main(void) {
-    double a = 0,
-           b = 0,
-           c = 0,
-           discr = 0,
-           square_of_discr = 0,
-           x1 = 0,
-           x2 = 0;
+    double koef_a = 0,
+           koef_b = 0,
+           koef_c = 0;
+    printf("Это жесть какой крутой решатель квадратных уравнений!!!\n\n");
     printf("Enter coefficients a, b, c: \n");
-    scanf("%lf %lf %lf", &a, &b, &c);
-    Test_Type(a, b, c);
-    discr =  pow(b, 2) - 4 * a * c;
-    square_of_discr = sqrt(discr);
-    if (discr < 0)
-        printf("решений нет!\n");
-    else if (discr == 0)
-    {
-        x1 = x2 = (-b)/(2*a);
-        printf("Решения этого уравнения: %.2lf и %.2lf\n", x1, x2);
-    }
-    else
-    {
-        x1 = (-b + square_of_discr) / (2 * a);
-        x2 = (-b - square_of_discr)/ (2 * a);
-        printf("Решения этого уравнения: %.2lf и %.2lf\n", x1, x2);
-    }
-
+    scanf("%lf %lf %lf", &koef_a, &koef_b, &koef_c);
+    test_type(koef_a, koef_b, koef_c);
+    korni(koef_a, koef_b, koef_c);
     return 0;
 }
 
 
-int Test_Type(double a, double b, double c)
+int test_type(double koef_a, double koef_b, double koef_c)
 {
-if (a == 0)
+if (koef_a == 0)
     {
-        if (b != 0)
+        if (koef_b != 0)
         {
             double x_line = 0;
-            x_line = (-c) / b;
+            x_line = (-koef_c) / koef_b;
             printf("Ваше уравнение линейное, его решение: %.2lf \n", x_line);
             exit(0);
         }
         else
         {
-            if (c == 0)
+            if (koef_c == 0)
             {
                 printf("Бесконечность не предел!!!\n");
                 exit(0);
@@ -69,4 +50,27 @@ if (a == 0)
         }
     }
     return 0;
+}
+
+void korni(int koef_a, int koef_b, int koef_c)
+{
+    double discr = 0,
+           x1 = 0,
+           x2 = 0;
+    float square_of_discr = 0;
+    discr =  pow(koef_b, 2) - 4 * koef_a * koef_c;
+    square_of_discr = sqrt(discr);
+    if (discr < 0)
+        printf("решений нет!\n");
+    else if (discr == 0)
+    {
+        x1 = x2 = (-koef_b) / (2 * koef_a);
+        printf("Решения этого уравнения: %.2lf и %.2lf\n", x1, x2);
+    }
+    else
+    {
+        x1 = (-koef_b + square_of_discr) / (2 * koef_a);
+        x2 = (-koef_b - square_of_discr)/ (2 * koef_a);
+        printf("Решения этого уравнения: %.2lf и %.2lf\n", x1, x2);
+    }
 }

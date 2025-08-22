@@ -7,7 +7,7 @@
 #include <string.h>       /*Для использования функций работы со строками (например, strlen)*/
 #include <ctype.h>          // для функций проверки символов
 #include <stdbool.h>        // вместо _Bool - bool, вместо 1 и 0 - true и false
-#include "functions.h"
+#include "my_funcs.h"
 
 
 
