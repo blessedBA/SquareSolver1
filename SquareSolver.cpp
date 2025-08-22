@@ -16,8 +16,10 @@ int main(void) {
            koef_b = 0,
            koef_c = 0;
     printf("Это жесть какой крутой решатель квадратных уравнений!!!\n\n");
+
     printf("Enter coefficients a, b, c: \n");
     scanf("%lf %lf %lf", &koef_a, &koef_b, &koef_c);
+
     test_type(koef_a, koef_b, koef_c);
     korni(koef_a, koef_b, koef_c);
     return 0;
@@ -26,30 +28,31 @@ int main(void) {
 
 int test_type(double koef_a, double koef_b, double koef_c)
 {
-if (koef_a == 0)
-    {
-        if (koef_b != 0)
+    double pogresh = 0.0001;
+    if (fabs(koef_a) < pogresh)
         {
-            double x_line = 0;
-            x_line = (-koef_c) / koef_b;
-            printf("Ваше уравнение линейное, его решение: %.2lf \n", x_line);
-            exit(0);
-        }
-        else
-        {
-            if (koef_c == 0)
+            if (koef_b != 0)
             {
-                printf("Бесконечность не предел!!!\n");
+                double x_line = 0;
+                x_line = (-koef_c) / koef_b;
+                printf("Ваше уравнение линейное, его решение: %.2lf \n", x_line);
                 exit(0);
             }
             else
             {
-                printf("эмм, решений нет\n");
-                exit(0);
+                if (koef_c == 0)
+                {
+                    printf("Бесконечность не предел!!!\n");
+                    exit(0);
+                }
+                else
+                {
+                    printf("эмм, решений нет\n");
+                    exit(0);
+                }
             }
         }
-    }
-    return 0;
+        return 0;
 }
 
 void korni(int koef_a, int koef_b, int koef_c)
