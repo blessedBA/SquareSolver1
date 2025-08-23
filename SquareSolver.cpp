@@ -7,174 +7,144 @@
 #include <limits.h>       /*Для использования макросов, определяющих пределы типов данных
                             (например, INT32_MAX - максимальное значение для 32-битного целого числа)*/
 #include <string.h>       /*Для использования функций работы со строками (например, strlen)*/
+#include <assert.h>
+
 enum NROOTS
 {
-    zero_root,
-   one_root,
-   two_roots
+    INF_ROOTS = -1,
+    ZERO_ROOT =  0,
+    ONE_ROOT  =  1,
+    TWO_ROOTS =  2,
 };
-const int INF = -1;
-int findRoots(double *, double *, double, double, double);  // проверяет тип уравнения
-// void korni(int, int, int); // выводит корни уравнения, в случае если оно
-                                                // квадратное
-int is_null(double);        // проверка, является ли вещественное число нулём
-int formulas_sq_vers(double*, double*,
-                     double, double, double); // формулы для "квадратного" случая
 
-void skip_string(void);     // игнор символов до конца строки
+void skipString();     // игнор символов до конца строки
+int isNull(double num);    // проверка, является ли вещественное число нулём
+int findRoots(double koef_a, double koef_b, double koef_c, double* x1, double* x2);  // return count of solutions and
+int formulasSquareVersion(double koef_a, double koef_b, double koef_c, double* x1, double* x2); // formulas for square case
+int findLineRoots(double koef_b, double koef_c, double *x1); // return count of solutions and find them(lineal case)
+void getAnswer(int nRoots, double x1, double x2); // выводит ответ
+void inputTest(double* koef_a, double* koef_b, double* koef_c);
 
-void get_answer(int, double, double); // выводит ответ
-int find_line_roots(double *, double, double);
+
+
 // NOTE: посмотреть что такое NaN, как оно представляется (как представляется double/float),
 // сколько существует NaN, как работают операции с NaN
 
 
-int main(void) {
-
+int main() {
 
     double koef_a = 0,
            koef_b = 0,
-           koef_c = 0,
-           x1 = 0,
+           koef_c = 0;
+    double x1 = 0,
            x2 = 0;
     int nRoots = 0;
-    printf("Это жесть какой крутой решатель квадратных уравнений!!!\n\n");
+    printf("This is very cool calculator for square equations!!!\n\n");
 
     printf("Enter coefficients a, b, c: \n");
-    // TODO: обработка ввода на невалидность
-    while (scanf("%lf %lf %lf", &koef_a, &koef_b, &koef_c) != 3) // обработка ввода на невалидность
-    {
-        printf("only numbers! Try again: \n");
-        skip_string();
-         // TODO вынести в отдельную функцию //
-        // TODO обьяснить что означает getchar(с точки зрения типа и значения)
-        /* гетчар считывает один символ с потока ввода и возвращает целочисленное
-        значение - ASCII код считанного символа */
-    }
-    nRoots = findRoots(&x1, &x2, koef_a, koef_b, koef_c); // TODO: findRoots is better
-    get_answer(nRoots, x1, x2);
+    inputTest(&koef_a, &koef_b, &koef_c);
+
+    nRoots = findRoots(koef_a, koef_b, koef_c, &x1, &x2);
+    getAnswer(nRoots, x1, x2);
+
     return 0;
 }
 
-int is_null(double num)
+void skipString()
 {
-    const float EPSILON = 0.0001f;
-    return fabs(num - EPSILON) < 0.0001;
+    int ch = 0;
+    while ((ch = getchar()) != '\n' && ch != EOF);
 }
 
-// TODO: rename findRoots
-int findRoots(double * x1, double * x2, double koef_a, double koef_b, double koef_c)
-{  // assert (x1 && x2);
-// TODO: assert ()
-    // TODO: вынести в функцию сравнение с нулём
-    int nRoots = 0;
-    if (is_null(koef_a))
-    {
-        return find_line_roots(x1, koef_b, koef_c);
-    }
-
-    else
-    {
-        nRoots = formulas_sq_vers(x1, x2, koef_a, koef_b, koef_c);
-        return nRoots;
-         // TODO: лишнее
-
-    }
-    return 0;
+int isNull(double num)
+{
+    const double EPSILON = 0.0000001;
+    return fabs(num) < EPSILON;
 }
 
-/* void korni(int koef_a, int koef_b, int koef_c)
+int findRoots(double koef_a, double koef_b, double koef_c, double * x1, double * x2)
 {
-    double discr = 0,
-           x1 = 0,
-           x2 = 0;
-    float square_of_discr = 0;
-    discr =  pow(koef_b, 2) - 4 * koef_a * koef_c;
-    square_of_discr = sqrt(discr);
-    if (discr < 0)
-        printf("Действительных решений нет!\n");
-    else if (discr == 0)
-    {
-        x1 = x2 = (-koef_b) / (2 * koef_a);
-        printf("Решения этого уравнения: %.2lf и %.2lf\n", x1, x2);
-    }
-    else
-    {
-        x1 = (-koef_b + square_of_discr) / (2 * koef_a);
-        x2 = (-koef_b - square_of_discr)/ (2 * koef_a);
-        printf("Решения этого уравнения: %.2lf и %.2lf\n", x1, x2);
-    }
-} */
+    assert(x1 != NULL);
+    assert(x2 != NULL);
+    assert(x1 != x2);
 
+    if (isNull(koef_a))
+    {
+        return findLineRoots(koef_b, koef_c, x1);
+    }
 
-int formulas_sq_vers(double * x1, double * x2,
-                  double koef_a, double koef_b, double koef_c)
+    return formulasSquareVersion(koef_a, koef_b, koef_c, x1, x2);
+}
+
+int formulasSquareVersion(double koef_a, double koef_b, double koef_c, double* x1, double* x2)
 {
+    assert(x1 != NULL);
+    assert(x2 != NULL);
+    assert(x1 != x2);
+
     double discr = (koef_b * koef_b)  - (4 * koef_a * koef_c);
-    if (discr > 0)
-    {
-        double square_of_discr = sqrt(discr);
-        *x1 = (-koef_b + square_of_discr) / (2 * koef_a);
-        *x2 = (-koef_b - square_of_discr)/ (2 * koef_a);
-        return two_roots;
-    }
-    else if (is_null(discr))
+    if (isNull(discr))
     {
         *x1 = (-koef_b) / (2 * koef_a);
-        return one_root;
+        return ONE_ROOT;
     }
-    else
+
+    if (discr < 0)
     {
-        return zero_root;
+        return ZERO_ROOT;
     }
-}
-void skip_string(void)
-{
-    char ch = 0;
-    while ((ch = char(getchar())) != '\n' && ch != EOF); // TODO: add check EOF
+
+    double square_of_discr = sqrt(discr);
+    *x1 = (-koef_b + square_of_discr) / (2 * koef_a);
+    *x2 = (-koef_b - square_of_discr)/ (2 * koef_a);
+
+    return TWO_ROOTS;
 }
 
-void get_answer(int nRoots, double x1, double x2)
+int findLineRoots(double koef_b, double koef_c, double *x1)
+{
+    assert(x1 != NULL);
+
+    if (isNull(koef_b))
+    {
+        return isNull(koef_c)
+            ? INF_ROOTS
+            : ZERO_ROOT;
+    }
+
+    *x1 = (-koef_c) / koef_b;
+
+    return ONE_ROOT;
+}
+
+void getAnswer(int nRoots, double x1, double x2)
 {
     switch (nRoots)
     {
-        case -1:
-            printf("Бесконечность не предел!!!\n");
+        case INF_ROOTS:
+            printf("Infinity is not limit!!!\n");
             break;
-        case 0:
-            printf("Решений нет");
+        case ZERO_ROOT:
+            printf("Your equation have no solutions\n");
             break;
-        case 1:
-            printf("Ваше уравнение имеет единственный корень: %.2lf\n", x1);
+        case ONE_ROOT:
+            printf("Your equation have own solution: %.3lg\n", x1);
             break;
-        case 2:
-            printf("Ваше уравнение имеет корни %.2lf и %.2lf\n", x1, x2);
+        case TWO_ROOTS:
+            printf("Your equation have solutions %.3lg and %.3lg\n", x1, x2);
+            break;
         default:
-            printf("ошибка\n");
-            exit(0);
-
+            assert(0 && "ERROR: Count of solutions is invalid");
+            break;
     }
 }
 
-int find_line_roots(double *x1, double koef_b, double koef_c)
+void inputTest(double* koef_a, double* koef_b, double* koef_c)
 {
+    while (scanf("%lg %lg %lg", koef_a, koef_b, koef_c) != 3) // обработка ввода на невалидность
     {
-            if (!is_null(koef_b))
-            {
-                *x1 = (-koef_c) / koef_b;
-                return 1;
-            }
-            else
-            {
-                if (is_null(koef_c))
-                {
-                    return INF; // TODO: relocate to another func
-                     // TODO: remove
-                }
-                else
-                    return 0;
-
-            }
-        }
+        printf("only numbers! Try again: \n");
+        skipString();
+    }
 }
 
