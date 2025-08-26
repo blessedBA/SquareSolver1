@@ -1,5 +1,5 @@
+#include "FuncsForRealNum.h"
 #include "SquareFuncs.h"
-
 #include "Utils.h"
 
 #include <assert.h>
@@ -23,8 +23,7 @@ NROOTS findRoots(SquareParams* parametrs)
 
 NROOTS findSquareRoots(SquareParams* parametrs)
 {
-    assert(&parametrs->x1 != NULL);
-    assert(&parametrs->x2 != NULL);
+    assert(parametrs != nullptr);
     assert(&parametrs->x1 != &parametrs->x2);
 
     double discriminant = (parametrs->koef_b * parametrs->koef_b) -
@@ -47,9 +46,9 @@ NROOTS findSquareRoots(SquareParams* parametrs)
     return TWO_ROOTS;
 }
 
-NROOTS findLineRoots(SquareParams* parametrs)
+NROOTS findLineRoots(SquareParams* parametrs)//TODO findLineRoot
 {
-    assert(&parametrs->x1 != NULL);
+    assert(parametrs != nullptr);
 
     if (isNull(parametrs->koef_b))
     {
@@ -63,7 +62,7 @@ NROOTS findLineRoots(SquareParams* parametrs)
     return ONE_ROOT;
 }
 
-bool checkOneNumber(double* number)
+bool getOneNumber(double* number)
 {
     return scanf("%lg", number);
 }

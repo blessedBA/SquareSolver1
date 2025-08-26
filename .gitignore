@@ -4,3 +4,4 @@ a.out.dSYM/Contents/Info.plist
 a.out.dSYM/Contents/Resources/Relocations/aarch64/a.out.yml
 input.txt
 output.txt
+.vscode/settings.json
