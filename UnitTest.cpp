@@ -18,7 +18,7 @@ int oneTest(UnitTestSquareSolver* ref_parametrs, size_t number_of_test)
         .koef_b = ref_parametrs->koef_b,
         .koef_c = ref_parametrs->koef_c,
         .x1 = NAN, .x2 = NAN};
-    
+
     int flag = 0;
     NROOTS nRoots = findRoots(&parametrs); // передавать параметры MAIN THING FOR UNIT-TESTING
     if (nRoots == ref_parametrs->nRoots_ref)
@@ -47,7 +47,7 @@ int oneTest(UnitTestSquareSolver* ref_parametrs, size_t number_of_test)
                     break;
                 }
                 flag++;
-                getDebugOutput(nRoots, ref_parametrs, parametrs);
+                getDebugOutput(nRoots, ref_parametrs, &parametrs);
                 break;
             default:
                 printf("error: invalid count of solutions\n");
@@ -84,7 +84,8 @@ void runAllTests(int* count_failed_tests, int* count_passed_tests)
       {0,      0,      0,   INF_ROOTS, NAN,   NAN},
       {0,      0,      5,   ZERO_ROOT, NAN,   NAN},
       {4,      3,     -1,   TWO_ROOTS, 0.25,  -1 },
-      {1,      0,     -1,   TWO_ROOTS, -1,     1 } };
+      {1,      0,     -1,   TWO_ROOTS, -1,     1 },
+      {0.000001, 200000, 300000, TWO_ROOTS, -2e11, -1.5} };
 
     size_t nTests = sizeof(tests) / sizeof(tests[0]); //NOTE - аккуратно с sizeof, можно
                                                       // посчитать размер не того обьекта
@@ -96,27 +97,16 @@ void runAllTests(int* count_failed_tests, int* count_passed_tests)
 
 }
 
-NROOTS checkAnswerLineEquation(const UnitTestSquareSolver* const ref_parametrs)
-{
-    if (isNull(ref_parametrs->koef_b))
-    {
-        return isNull(ref_parametrs->koef_c)
-            ? INF_ROOTS
-            : ZERO_ROOT;
-    }
-    return ONE_ROOT;
-}
-
 void getDebugOutput(
     const int nRoots,
     const UnitTestSquareSolver* const ref_parametrs,
-    const SquareParams parametrs) //TODO передавай структуру через указатель(везде в коде)
+    const SquareParams* const parametrs)
 {
     assert(ref_parametrs != nullptr);
-    assert(&parametrs != nullptr);
+    assert(parametrs != nullptr);
 
     printf("FAILED: your output: ");
-    getTestAnswer(nRoots, parametrs.x1, parametrs.x2);
+    getTestAnswer(nRoots, parametrs->x1, parametrs->x2);
     printf("and expected: ");
     getTestAnswer(ref_parametrs->nRoots_ref, ref_parametrs->x1_ref, ref_parametrs->x2_ref);
     printf("\n");

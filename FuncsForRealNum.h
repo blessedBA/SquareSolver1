@@ -1,7 +1,7 @@
 #ifndef FUNCS_FOR_REAL_NUM_H
 #define FUNCS_FOR_REAL_NUM_H
 
-//TODO: константы в хедере не нужны тк здесь переменные не используются
+
 
 int isNull( double num);
 bool compareDoubleNumbers(double num1, double num2);

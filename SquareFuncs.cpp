@@ -9,13 +9,16 @@
 #include <stdlib.h>
 #include <string.h>
 
+static NROOTS findSquareRoots(SquareParams* parametrs);
+static NROOTS findLineRoot(SquareParams* parametrs);
+
 NROOTS findRoots(SquareParams* parametrs)
 {
     assert(parametrs != nullptr);
 
     if (isNull(parametrs->koef_a))
     {
-        return findLineRoots(parametrs);
+        return findLineRoot(parametrs);
     }
 
     return findSquareRoots(parametrs);
@@ -46,7 +49,7 @@ NROOTS findSquareRoots(SquareParams* parametrs)
     return TWO_ROOTS;
 }
 
-NROOTS findLineRoots(SquareParams* parametrs)//TODO findLineRoot
+NROOTS findLineRoot(SquareParams* parametrs)
 {
     assert(parametrs != nullptr);
 

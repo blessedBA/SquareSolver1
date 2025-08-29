@@ -1,3 +1,4 @@
+#include "ArgParser.h"
 #include "FuncsForRealNum.h"
 #include "UnitTest.h"
 #include "Utils.h"
@@ -12,28 +13,14 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>       /*Для использования функций работы со строками (например, strlen)*/
+       /*Для использования функций работы со строками (например, strlen)*/
 
-
-struct ConsoleFlag
-{
-    int status;
-    char name[20];
-};
-
-struct ConsoleFlag2
-{
-    const char unit_test[7];
-    const char  release[10];
-    const char      help[7];
-};
-
-
-int getAnswer(const SquareParams parametrs);
-void getInput(SquareParams* parametrs, bool* isEOF);
+int startProgramm(const FlagStorage* storage);
 void releaseMode();
-int getFlags(int argc, const char* argv[],
-             ConsoleFlag list_flags[], size_t nElements);
+void unitTestMode();
+void getInput(SquareParams* parametrs, bool* isEOF);
+int getAnswer(const SquareParams parametrs);
+
 // NOTE: посмотреть что такое NaN, как оно представляется (как представляется double/float),
 // сколько существует NaN, как работают операции с NaN
 // выражение (NaN == NaN) всегда возвращает false, поэтому для проверки числа на тип NaN
@@ -41,96 +28,63 @@ int getFlags(int argc, const char* argv[],
 // также любое выражение, содержащее в себе NaN, возвращает NaN.
 // 2 типа NaN: qNaN(quiet NaN) и sNaN(signal NaN). Первый просто показывает где и что вернулось NaN
 // а второй останавливает программу и показывает где он появился(был использован)
-// лекции Северова ФРКТ
+// TODO посмотреть лекции Северова ФРКТ про NaN-ы
 
 
-
-// TODO сделать арк парсер - глобал функцию, в которую принимается
-// массив структур(каждая структура - флаг), argc и argv[] и аргумент флага и еще че то(путь какой то в хранилище)
-// в этой функции поступившие флаги сверяются с флагами из структуры и при соответсвии выполняются
-int main(const int argc, const char* argv[])// TODO: const
+int main(const int argc, const char* argv[])
 {
-    // TODO сделать массив указателей на функции запуска версий программы
-    // (переделать runAllTests чтоб стала без параметров)
-    //
-    ConsoleFlag list_flags[2] = { {0, "--release"},
-                                 {0,    "--test"} };
-    size_t nElements = sizeof(list_flags) / sizeof(list_flags[0]);
-    //int i = getFlags(argc, argv, list_flags, nElements);
-    ConsoleFlag2 flags = { .unit_test = "--test",
-                          .release = "--release",
-                          .help = "--help"       };
-    if (argc == 1)
+    FlagStorage storage = { .inputFileName = nullptr,
+                            .outputFileName = nullptr };
+
+    const ConsoleFlag list_flags[4] =
+        { {"--release", "-r", setRelease      , false},
+          {  "--test",  "-t", setUnitTests    , false},
+          {"--input",   "-i", inputFileEnable , true },
+          {"--output",  "-o", outputFileEnable, true } };
+
+    size_t count_flags  = sizeof(list_flags) / sizeof(list_flags[0]);
+    getFlags(argc, argv, list_flags, count_flags, &storage);
+    startProgramm(&storage);
+    return 0;
+}
+
+int startProgramm(const FlagStorage* storage)
+{
+    bool test_valid = testValid(storage);
+    if (!test_valid)
     {
-        printf("Unknown command, please try again\n"
-               "(enter ./a.out --help for help)\n");
+        printf("invalid command!!!\n");
         return 0;
     }
-    else if (strcmp(argv[1], flags.unit_test) == false) // TODO: strncmp
+    if (storage->inputFileName != nullptr)
     {
-        int count_failed_tests = 0,
-            count_passed_tests = 0,
-            count_all_tests = 0;
-        runAllTests(&count_failed_tests, &count_passed_tests);
-
-        count_all_tests = count_failed_tests + count_passed_tests;
-        printf("failed %d tests.\n"
-               "passed %d/%d tests.\n",
-                count_failed_tests,
-                count_passed_tests,
-                count_all_tests);
+        FILE* ptr_to_input_file = fopen(storage->inputFileName, "r");
+        printf("%s\n", storage->inputFileName);
+        fclose(ptr_to_input_file);
+        //releaseModeInFile();
     }
-    else if (strcmp(argv[1], flags.release) == false)
+
+    if (storage->outputFileName != nullptr)
+    {
+        FILE* ptr_to_output_file = fopen(storage->outputFileName, "w");
+        printf("%s\n", storage->outputFileName);
+        fclose(ptr_to_output_file);
+        //releaseModeOutFile();
+    }
+
+    if (storage->releaseEnabled)
     {
         releaseMode();
         return 0;
     }
-    else if (strcmp(argv[1], flags.help) == 0)
-    {
-        printf("Enter ./a.out --release for main version\n"
-               "Enter ./a.out --test for Unit-testing");
-    }
-    else
-    {
-        printf("Unknown command, please try again\n"
-               "(enter ./a.out --help for help)\n");
-        return 0;
-    }
 
-
-    return 0;
-}
-
-int getFlags(int argc, const char* argv[],
-             ConsoleFlag list_flags[], size_t nElements)
-{
-    char do_flag[] = "";
-    int remember_flag = 0;
-    for (int i = 3; i <= argc; i++)
+    if (storage->testsEnabled)
     {
-        for (size_t j = 0; j < nElements; j++)
-        {
-            if (strcmp(argv[i], list_flags[j].name) == 0)
-            {
-                list_flags[j].status++;
-                remember_flag = j;
-            }
-        }
-
-    }
-    switch (remember_flag)
-    {
-        case 0:
-            releaseMode();
-        // case 1:
-        //     unitTestMode();
-        default:
-            assert ("FATAL ERROR: invalid flag\n");
+        unitTestMode();
     }
 
     return 0;
 }
-
 
 void releaseMode()
 {
@@ -142,11 +96,22 @@ void releaseMode()
 
     getInput(&parametrs, &isEOF);
     parametrs.nRoots = findRoots(&parametrs);
-    int ind = isEOF ? 1 : getAnswer(parametrs); // переделать логику isEOF
+    int ind = isEOF ? 1 : getAnswer(parametrs);
     if (ind == 1)
     {
         printf("Coefficients were not entered\n");
     }
+}
+
+void unitTestMode()
+{
+    int count_failed_tests = 0,
+        count_passed_tests = 0,
+        count_all_tests    = 0;
+    runAllTests(&count_failed_tests, &count_passed_tests);
+    count_all_tests = count_failed_tests + count_passed_tests;
+    printf("failed %d tests.\n", count_failed_tests);
+    printf("passed %d/%d tests.\n", count_passed_tests, count_all_tests);
 }
 
 void getInput(SquareParams* parametrs, bool* isEOF)
