@@ -12,15 +12,14 @@
                             (например, INT32_MAX - максимальное значение для 32-битного целого числа)*/
 #include <math.h>
 #include <stdio.h>
-#include <stdlib.h>
-       /*Для использования функций работы со строками (например, strlen)*/
+#include <stdlib.h> /*Для использования функций работы со строками (например, strlen)*/
 
 int startProgramm(const FlagStorage* storage);
 void releaseMode();
 void unitTestMode();
 void getInput(SquareParams* parametrs, bool* isEOF);
 int getAnswer(const SquareParams parametrs);
-
+//{
 // NOTE: посмотреть что такое NaN, как оно представляется (как представляется double/float),
 // сколько существует NaN, как работают операции с NaN
 // выражение (NaN == NaN) всегда возвращает false, поэтому для проверки числа на тип NaN
@@ -29,10 +28,13 @@ int getAnswer(const SquareParams parametrs);
 // 2 типа NaN: qNaN(quiet NaN) и sNaN(signal NaN). Первый просто показывает где и что вернулось NaN
 // а второй останавливает программу и показывает где он появился(был использован)
 // TODO посмотреть лекции Северова ФРКТ про NaN-ы
-
-
+// TODO поделить проект на папки - в одних хедера, в других сппшники
+// TODO разобраться с мейкфайлом
+// TODO исправить 6ой тест - неправильное сравнение двух чисел
+//}
 int main(const int argc, const char* argv[])
 {
+    printf("МЯУ\n\n");
     FlagStorage storage = { .inputFileName = nullptr,
                             .outputFileName = nullptr };
 
@@ -45,11 +47,13 @@ int main(const int argc, const char* argv[])
     size_t count_flags  = sizeof(list_flags) / sizeof(list_flags[0]);
     getFlags(argc, argv, list_flags, count_flags, &storage);
     startProgramm(&storage);
+
     return 0;
 }
 
 int startProgramm(const FlagStorage* storage)
 {
+    assert(storage != nullptr);
     bool test_valid = testValid(storage);
     if (!test_valid)
     {
@@ -132,15 +136,19 @@ int getAnswer(const SquareParams parametrs)
     {
         case INF_ROOTS:
             printf("Infinity is not limit!!!\n");
+            printf("\n\nGITHUB COMMIT");
             break;
         case ZERO_ROOT:
             printf("Your equation have no solutions\n");
+            printf("\n\nGITHUB COMMIT");
             break;
         case ONE_ROOT:
             printf("Your equation have own solution: %.3lg\n", parametrs.x1);
+            printf("\n\nGITHUB COMMIT");
             break;
         case TWO_ROOTS:
             printf("Your equation have solutions %.3lg and %.3lg\n", parametrs.x1, parametrs.x2);
+            printf("\n\nGITHUB COMMIT");
             break;
         default:
             assert(0 && "ERROR: Count of solutions is invalid");

@@ -9,31 +9,29 @@
 #include <stdlib.h>
 #include <string.h>
 
-static NROOTS findSquareRoots(SquareParams* parametrs);
-static NROOTS findLineRoot(SquareParams* parametrs);
+static NROOTS findSquareRoots(SquareParams* parameters);
+static NROOTS findLineRoot(SquareParams* parameters);
 
-NROOTS findRoots(SquareParams* parametrs)
+NROOTS findRoots(SquareParams* parameters)
 {
-    assert(parametrs != nullptr);
+    assert(parameters != nullptr);
 
-    if (isNull(parametrs->koef_a))
+    if (isNull(parameters->koef_a))
     {
-        return findLineRoot(parametrs);
+        return findLineRoot(parameters);
     }
 
-    return findSquareRoots(parametrs);
+    return findSquareRoots(parameters);
 }
 
-NROOTS findSquareRoots(SquareParams* parametrs)
+NROOTS findSquareRoots(SquareParams* parameters)
 {
-    assert(parametrs != nullptr);
-    assert(&parametrs->x1 != &parametrs->x2);
-
-    double discriminant = (parametrs->koef_b * parametrs->koef_b) -
-                      (4 * parametrs->koef_a * parametrs->koef_c);
+    assert(parameters != nullptr);
+    double discriminant = (parameters->koef_b * parameters->koef_b) -
+                      (4 * parameters->koef_a * parameters->koef_c);
     if (isNull(discriminant))
     {
-        parametrs->x1 = (-parametrs->koef_b) / (2 * parametrs->koef_a);
+        parameters->x1 = (-parameters->koef_b) / (2 * parameters->koef_a);
         return ONE_ROOT;
     }
 
@@ -43,24 +41,24 @@ NROOTS findSquareRoots(SquareParams* parametrs)
     }
 
     double square_of_discriminant = sqrt(discriminant);
-    parametrs->x1 = (-parametrs->koef_b + square_of_discriminant) / (2 * parametrs->koef_a);
-    parametrs->x2 = (-parametrs->koef_b - square_of_discriminant) / (2 * parametrs->koef_a);
+    parameters->x1 = (-parameters->koef_b + square_of_discriminant) / (2 * parameters->koef_a);
+    parameters->x2 = (-parameters->koef_b - square_of_discriminant) / (2 * parameters->koef_a);
 
     return TWO_ROOTS;
 }
 
-NROOTS findLineRoot(SquareParams* parametrs)
+NROOTS findLineRoot(SquareParams* parameters)
 {
-    assert(parametrs != nullptr);
+    assert(parameters != nullptr);
 
-    if (isNull(parametrs->koef_b))
+    if (isNull(parameters->koef_b))
     {
-        return isNull(parametrs->koef_c) //
+        return isNull(parameters->koef_c) //
             ? INF_ROOTS                  //    Kaspersky edition
             : ZERO_ROOT;                 //
     }
 
-    parametrs->x1 = (-parametrs->koef_c) / parametrs->koef_b;
+    parameters->x1 = (-parameters->koef_c) / parameters->koef_b;
 
     return ONE_ROOT;
 }

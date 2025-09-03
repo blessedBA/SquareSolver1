@@ -10,6 +10,9 @@ void getFlags(const int argc, const char* argv[],
               const size_t count_flags,
               FlagStorage* storage)
 {
+    // TODO asserts
+    assert(storage != nullptr);
+    assert(&list_flags != NULL);
     for (int i = 1; i < argc; i++)
     {
         for (size_t j = 0; j < count_flags; j++)

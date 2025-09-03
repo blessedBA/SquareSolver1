@@ -6,7 +6,7 @@ echo "Building...
 "
 
 
-g++ main.cpp UnitTest.cpp SquareFuncs.cpp Utils.cpp FuncsForRealNum.cpp ArgParser.cpp -o a.out -D _DEBUG -ggdb3 -std=c++17 -O0 -Wall -Wextra -Weffc++ -Wc++14-compat -Wmissing-declarations -Wcast-align -Wcast-qual \
+g++ main.cpp UnitTest.cpp SquareFuncs.cpp Utils.cpp FuncsForRealNum.cpp ArgParser.cpp -o a.out -g -D _DEBUG -ggdb3 -std=c++17 -O0 -Wall -Wextra -Weffc++ -Wc++14-compat -Wmissing-declarations -Wcast-align -Wcast-qual \
 -Wchar-subscripts -Wconversion -Wctor-dtor-privacy -Wempty-body -Wfloat-equal -Wformat-nonliteral -Wformat-security \
 -Wformat-signedness -Wformat=2 -Winline -Wnon-virtual-dtor -Woverloaded-virtual -Wpacked -Wpointer-arith -Winit-self \
 -Wredundant-decls -Wshadow -Wsign-conversion -Wsign-promo -Wstrict-overflow=2 -Wsuggest-override -Wswitch-default \

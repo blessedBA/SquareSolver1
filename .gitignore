@@ -5,3 +5,5 @@ a.out.dSYM/Contents/Resources/Relocations/aarch64/a.out.yml
 input.txt
 output.txt
 .vscode/settings.json
+html
+.DS_Store

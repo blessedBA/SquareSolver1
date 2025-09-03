@@ -11,17 +11,18 @@
 #include <stdio.h>
 
 
-int oneTest(UnitTestSquareSolver* ref_parametrs, size_t number_of_test)
+int oneTest(UnitTestSquareSolver* ref_parameters, size_t number_of_test)
 {
-    SquareParams parametrs = {
-        .koef_a = ref_parametrs->koef_a,
-        .koef_b = ref_parametrs->koef_b,
-        .koef_c = ref_parametrs->koef_c,
-        .x1 = NAN, .x2 = NAN};
+    assert(ref_parameters != nullptr);
+    SquareParams parameters = {
+        .koef_a = ref_parameters->koef_a,
+        .koef_b = ref_parameters->koef_b,
+        .koef_c = ref_parameters->koef_c,
+        .x1 = NAN, .x2 = NAN };
 
-    int flag = 0;
-    NROOTS nRoots = findRoots(&parametrs); // передавать параметры MAIN THING FOR UNIT-TESTING
-    if (nRoots == ref_parametrs->nRoots_ref)
+    int isFailedTest = 0;
+    NROOTS nRoots = findRoots(&parameters); // передавать параметры MAIN THING FOR UNIT-TESTING
+    if (nRoots == ref_parameters->nRoots_ref)
     {
         switch (nRoots)
         {
@@ -30,54 +31,42 @@ int oneTest(UnitTestSquareSolver* ref_parametrs, size_t number_of_test)
             case ZERO_ROOT:
                 break;
             case ONE_ROOT:
-                if (compareDoubleNumbers(parametrs.x1, ref_parametrs->x1_ref))
+                if (compareDoubleNumbers(parameters.x1, ref_parameters->x1_ref))
                 {
                     break;
                 }
-                flag++;
+                isFailedTest++;
                 printf("FAILED: solution is incorrect:\n"
                        "%zu test:  %lg instead of %lg\n", number_of_test,
-                                                         parametrs.x1,
-                                                         ref_parametrs->x1_ref);
+                                                         parameters.x1,
+                                                         ref_parameters->x1_ref);
                 break;
             case TWO_ROOTS:
-                if (checkEqualityNumbers(parametrs.x1, parametrs.x2,
-                    ref_parametrs->x1_ref, ref_parametrs->x2_ref))
+                if (checkEqualityNumbers(parameters.x1, parameters.x2,
+                    ref_parameters->x1_ref, ref_parameters->x2_ref))
                 {
                     break;
                 }
-                flag++;
-                getDebugOutput(nRoots, ref_parametrs, &parametrs);
+                isFailedTest++;
+                getDebugOutput(nRoots, ref_parameters, &parameters);
                 break;
             default:
                 printf("error: invalid count of solutions\n");
         }
-        // if (isnan(ref_parametrs->x2_ref) &&
-        //     !compareDoubleNumbers(parametrs.x1, ref_parametrs->x1_ref))
-        // {
-        //     flag++;
-        //     getDebugOutput(nRoots, ref_parametrs, parametrs);
-        // }
-        // else if (!checkEqualityNumbers(parametrs.x1, parametrs.x2,
-        //           ref_parametrs->x1_ref, ref_parametrs->x2_ref))
-        // {
-        //     flag++;
-        //     getDebugOutput(nRoots, ref_parametrs, parametrs);
-        // }
     }
-    else if (nRoots != ref_parametrs->nRoots_ref)
+    else if (nRoots != ref_parameters->nRoots_ref)
     {
-        flag++;
+        isFailedTest++;
         printf("FAILED: invalid count of solutions:\n"
         "%zu test:  %d  instead of  %d\n", number_of_test,
-                                           nRoots, ref_parametrs->nRoots_ref);
+                                           nRoots, ref_parameters->nRoots_ref);
     }
 
-    return flag;
+    return isFailedTest;
 }
 
 void runAllTests(int* count_failed_tests, int* count_passed_tests)
-{                                // koef_a, koef_b, koef_c, nRoots, x1_ref, x2_ref
+{
     UnitTestSquareSolver tests[] =
   // koef_a, koef_b, koef_c, nRoots, x1_ref, x2_ref
     { {1,      2,      1,   ONE_ROOT,  -1,    NAN},
@@ -99,16 +88,16 @@ void runAllTests(int* count_failed_tests, int* count_passed_tests)
 
 void getDebugOutput(
     const int nRoots,
-    const UnitTestSquareSolver* const ref_parametrs,
-    const SquareParams* const parametrs)
+    const UnitTestSquareSolver* const ref_parameters,
+    const SquareParams* const parameters)
 {
-    assert(ref_parametrs != nullptr);
-    assert(parametrs != nullptr);
+    assert(ref_parameters != nullptr);
+    assert(parameters != nullptr);
 
     printf("FAILED: your output: ");
-    getTestAnswer(nRoots, parametrs->x1, parametrs->x2);
+    getTestAnswer(nRoots, parameters->x1, parameters->x2);
     printf("and expected: ");
-    getTestAnswer(ref_parametrs->nRoots_ref, ref_parametrs->x1_ref, ref_parametrs->x2_ref);
+    getTestAnswer(ref_parameters->nRoots_ref, ref_parameters->x1_ref, ref_parameters->x2_ref);
     printf("\n");
 }
 
